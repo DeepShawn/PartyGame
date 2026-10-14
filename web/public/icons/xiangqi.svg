@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img">
+  <title>中国象棋</title>
+  <rect x="3" y="3" width="94" height="94" rx="24" ry="24" fill="#EAF4EF" stroke="#C6DDD4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="21" y="21" width="58" height="58" rx="7" ry="7" fill="#FBF6EA" stroke="#153D3A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="36,27 36,46" fill="none" stroke="#7FA69A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="36,54 36,73" fill="none" stroke="#7FA69A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="50,27 50,46" fill="none" stroke="#7FA69A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="50,54 50,73" fill="none" stroke="#7FA69A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="64,27 64,46" fill="none" stroke="#7FA69A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="64,54 64,73" fill="none" stroke="#7FA69A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="27,36 73,36" fill="none" stroke="#7FA69A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="27,64 73,64" fill="none" stroke="#7FA69A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="50" cy="36" r="9.5" fill="#C2483D"/>
+  <circle cx="50" cy="36" r="6.2" fill="none" stroke="#FBF6EA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="50" cy="36" r="1.7" fill="#FBF6EA"/>
+  <circle cx="64" cy="64" r="7.5" fill="#153D3A"/>
+  <circle cx="64" cy="64" r="4.6" fill="none" stroke="#FBF6EA" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="64" cy="64" r="1.4" fill="#FBF6EA"/>
+</svg>

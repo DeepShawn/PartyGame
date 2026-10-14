@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img">
+  <title>同乐盒 PartyGame · 同乐三人</title>
+  <rect x="0" y="0" width="100" height="100" rx="22" ry="22" fill="#0F6F6A"/>
+  <polygon points="47.03,53.34 43.53,63.83 56.47,63.83 52.97,53.34" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="2.27" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="50" cy="48.62" r="5.77" fill="#FFFFFF"/>
+  <rect x="42.31" y="63.83" width="15.38" height="4.37" rx="2.1" ry="2.1" fill="#FFFFFF"/>
+  <polygon points="31.33,56.61 28.6,64.82 38.72,64.82 35.99,56.61" fill="#FFC96B" stroke="#FFC96B" stroke-width="1.78" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="33.66" cy="52.92" r="4.51" fill="#FFC96B"/>
+  <rect x="27.64" y="64.82" width="12.04" height="3.42" rx="1.64" ry="1.64" fill="#FFC96B"/>
+  <polygon points="64.01,56.61 61.28,64.82 71.4,64.82 68.67,56.61" fill="#FFA89B" stroke="#FFA89B" stroke-width="1.78" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="66.34" cy="52.92" r="4.51" fill="#FFA89B"/>
+  <rect x="60.32" y="64.82" width="12.04" height="3.42" rx="1.64" ry="1.64" fill="#FFA89B"/>
+</svg>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img">
+  <title>坦克乱斗</title>
+  <rect x="3" y="3" width="94" height="94" rx="24" ry="24" fill="#EAF4EF" stroke="#C6DDD4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="25" y="45" width="9" height="31" rx="4.5" ry="4.5" fill="#153D3A"/>
+  <rect x="66" y="45" width="9" height="31" rx="4.5" ry="4.5" fill="#153D3A"/>
+  <rect x="30" y="47" width="40" height="27" rx="8" ry="8" fill="#0E8175"/>
+  <polyline points="50,60 50,27" fill="none" stroke="#153D3A" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="50" cy="60.5" r="9" fill="#153D3A"/>
+  <circle cx="47.2" cy="57.8" r="2.2" fill="#FFFFFF"/>
+</svg>

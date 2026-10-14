@@ -1,0 +1,78 @@
+name: Native engines
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'engines/**'
+      - '.github/workflows/native-engines.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  katago:
+    name: 构建 KataGo（Android arm64, Eigen CPU）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 下载 NDK r27d
+        run: |
+          curl -fL --retry 3 -o ndk.zip https://dl.google.com/android/repository/android-ndk-r27d-linux.zip
+          unzip -q ndk.zip
+          echo "NDK=$PWD/android-ndk-r27d" >> "$GITHUB_ENV"
+
+      - name: 准备 Eigen 与 zlib
+        run: |
+          sudo apt-get update && sudo apt-get install -y libeigen3-dev
+          ZLIB_INC="$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include"
+          ZLIB_LIB=$(find "$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android" -maxdepth 1 -name 'libz.so' | head -1)
+          echo "ZLIB_INC=$ZLIB_INC" >> "$GITHUB_ENV"
+          echo "ZLIB_LIB=$ZLIB_LIB" >> "$GITHUB_ENV"
+          mkdir -p atomic-stub
+          "$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar" rcs atomic-stub/libatomic.a
+          echo "STUB=$PWD/atomic-stub" >> "$GITHUB_ENV"
+
+      - name: 获取固定版本 KataGo 源码
+        run: |
+          curl -fL --retry 3 -o katago.tar.gz https://github.com/lightvector/KataGo/archive/refs/tags/v1.16.5.tar.gz
+          tar xzf katago.tar.gz
+          echo "SRC=$PWD/KataGo-1.16.5/cpp" >> "$GITHUB_ENV"
+
+      - name: 配置与构建
+        run: |
+          cmake -S "$SRC" -B build -G "Unix Makefiles" \
+            -DCMAKE_TOOLCHAIN_FILE="$NDK/build/cmake/android.toolchain.cmake" \
+            -DANDROID_ABI=arm64-v8a \
+            -DANDROID_PLATFORM=android-29 \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DUSE_BACKEND=EIGEN \
+            -DBUILD_DISTRIBUTED=0 \
+            -DNO_GIT_REVISION=1 \
+            -DEIGEN3_INCLUDE_DIRS=/usr/include/eigen3 \
+            -DZLIB_INCLUDE_DIR="$ZLIB_INC" \
+            -DZLIB_LIBRARY="$ZLIB_LIB" \
+            -DCMAKE_EXE_LINKER_FLAGS="-static-libstdc++ -Wl,-z,max-page-size=16384 -L$STUB"
+          cmake --build build -j"$(nproc)"
+
+      - name: 校验并打包 libkatago.so
+        run: |
+          "$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip" build/katago
+          mkdir -p out
+          cp build/katago out/libkatago.so
+          READELF="$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf"
+          "$READELF" -h out/libkatago.so | grep -E 'Class|Machine|Type'
+          "$READELF" -lW out/libkatago.so | grep LOAD
+          ALIGNS=$("$READELF" -lW out/libkatago.so | awk '/LOAD/{print $NF}' | sort -u)
+          echo "LOAD aligns: $ALIGNS"
+          if echo "$ALIGNS" | grep -qvE '0x4000|0x1000'; then
+            echo "警告：存在非 4K/16K 对齐段（可能在 16KB 页设备上无法加载）"
+          fi
+          ls -l out
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: katago-android-arm64
+          path: out/libkatago.so
+          if-no-files-found: error

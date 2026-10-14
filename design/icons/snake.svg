@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img">
+  <title>贪吃蛇竞技</title>
+  <rect x="3" y="3" width="94" height="94" rx="24" ry="24" fill="#EAF4EF" stroke="#C6DDD4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="24,69 36,69 36,55 48,55 48,69 60,69 60,45 68,45" fill="none" stroke="#0E8175" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="68" cy="45" r="8" fill="#0E8175"/>
+  <circle cx="70.8" cy="42.6" r="2" fill="#FFFFFF"/>
+  <circle cx="83" cy="45" r="5.5" fill="#B87A1E"/>
+  <polyline points="83,39.5 85.5,36.2" fill="none" stroke="#B87A1E" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

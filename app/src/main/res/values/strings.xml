@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">同乐盒 PartyGame</string>
+    <string name="nav_games">游戏</string>
+    <string name="nav_connect">联机</string>
+    <string name="nav_appearance">外观</string>
+    <string name="nav_settings">设置</string>
+    <string name="action_confirm">确认</string>
+    <string name="action_cancel">取消</string>
+    <string name="action_leave">离开</string>
+    <string name="privacy_handoff">请将设备交给下一位玩家，确认后再查看手牌。</string>
+</resources>
