@@ -48,22 +48,39 @@ object GameFactory {
 
 /** 把随 APK 打包的引擎配置/模型按需复制到应用私有目录（assets 不可直接执行或映射）。 */
 object EngineAssets {
-    private const val MODEL = "engines/model.bin.gz"
+    // aapt2 会解压以 .gz 结尾的资源并去掉后缀，因此先找 model.bin，再退回 model.bin.gz（两者 KataGo 都能按后缀正确解析）。
+    private val MODEL_ASSETS = listOf("engines/model.bin", "engines/model.bin.gz")
     private const val CONFIG = "engines/gtp.cfg"
 
     fun ensure(context: Context): KataGoFiles? {
         val appContext = context.applicationContext
         val engine = KataGoEngine.locate(appContext) ?: return null
         val dir = File(appContext.filesDir, "engines").also { it.mkdirs() }
-        val model = File(dir, "model.bin.gz")
         val config = File(dir, "gtp.cfg")
         return try {
             if (!config.isFile || config.length() == 0L) copy(appContext, CONFIG, config)
-            if (!model.isFile || model.length() == 0L) copy(appContext, MODEL, model)
+            val model = ensureModel(appContext, dir) ?: return null
             KataGoFiles(engine, config, model)
         } catch (_: Exception) {
             null
         }
+    }
+
+    private fun ensureModel(context: Context, dir: File): File? {
+        MODEL_ASSETS.forEach { asset ->
+            val target = File(dir, asset.substringAfterLast('/'))
+            if (target.isFile && target.length() > 0L) return target
+        }
+        MODEL_ASSETS.forEach { asset ->
+            val target = File(dir, asset.substringAfterLast('/'))
+            try {
+                copy(context, asset, target)
+                return target
+            } catch (_: Exception) {
+                // 该命名不存在则尝试下一个
+            }
+        }
+        return null
     }
 
     private fun copy(context: Context, asset: String, target: File) {
