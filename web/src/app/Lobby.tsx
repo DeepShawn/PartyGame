@@ -45,14 +45,10 @@ export function LobbyView({ onLocal, onNet }: { onLocal: (game: GameInfo) => voi
             </button>
           ))}
         </div>
-        <input
-          className="field-input search"
-          type="search"
-          value={search}
-          placeholder="搜索游戏、规则关键词"
-          aria-label="搜索游戏"
-          onChange={(event) => setSearch(event.target.value)}
-        />
+        <div className="search-wrap">
+          <input className="field-input search" type="search" value={search} placeholder="搜索游戏、规则关键词" aria-label="搜索游戏" onChange={(event) => setSearch(event.target.value)} />
+          {search ? <button type="button" className="search-clear" aria-label="清除搜索" onClick={() => setSearch('')}>×</button> : null}
+        </div>
       </div>
 
       <div className="game-grid">

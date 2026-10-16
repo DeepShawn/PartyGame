@@ -573,6 +573,13 @@ html[data-motion="reduced"] *::after {
   box-shadow: var(--shadow-2);
 }
 
+.game-card:active { transform: translateY(0) scale(0.985); border-color: var(--accent); box-shadow: var(--shadow-1); }
+.game-card:focus-visible, .chip:focus-visible, .btn:focus-visible, .nav-item:focus-visible, .search-clear:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 2px; }
+.search-wrap { position: relative; min-width: min(100%, 280px); }
+.search-wrap .search { width: 100%; padding-right: 2.4rem; }
+.search-clear { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border: 0; border-radius: 50%; background: transparent; color: var(--muted); font-size: 1.25rem; cursor: pointer; }
+.search-clear:hover { background: var(--soft); color: var(--accent); }
+
 .game-cell {
   display: flex;
   flex-direction: column;
@@ -798,7 +805,11 @@ html[data-motion="reduced"] *::after {
   box-shadow: var(--shadow-3);
   display: flex;
   flex-direction: column;
+  animation: modal-in 0.18s ease-out;
 }
+
+@keyframes modal-in { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-motion="reduced"] *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
 
 .modal-wide {
   max-width: 760px;

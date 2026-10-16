@@ -19,7 +19,7 @@ export function RoomScreen({ client, onExit }: { client: AnyRoom; onExit: (reaso
   const [invite, setInvite] = useState('');
   const [copied, setCopied] = useState('');
   const [confirmLeave, setConfirmLeave] = useState(false);
-  const recorded = useRef(false);
+  const recordedMatch = useRef<string | number | null>(null);
 
   useEffect(() => client.subscribe(setState), [client]);
 
@@ -44,10 +44,11 @@ export function RoomScreen({ client, onExit }: { client: AnyRoom; onExit: (reaso
   }, [hostClient, guestClient]);
 
   useEffect(() => {
-    if (!state.snapshot?.game || state.snapshot.phase !== 'playing') recorded.current = false;
     const game = state.snapshot?.game;
-    if (!game || game.winner === null || recorded.current) return;
-    recorded.current = true;
+    if (!game || game.winner === null) return;
+    const matchKey = state.snapshot?.matchId ?? `${state.snapshot?.roomId ?? ''}:${game.gameId}`;
+    if (recordedMatch.current === matchKey) return;
+    recordedMatch.current = matchKey;
     const result = game.winner === -1 ? 'draw' : game.winner === state.snapshot?.yourSeat ? 'win' : 'loss';
     void recordGame({
       game_id: game.gameId,

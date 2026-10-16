@@ -7,20 +7,27 @@ export function AuthView() {
   const [password, setPassword] = useState('');
   const [user, setUser] = useState<string | null>(null);
   const [message, setMessage] = useState('');
+  const [busy, setBusy] = useState(false);
   useEffect(() => {
     void supabase.auth.getUser().then(({ data }) => setUser(data.user?.email ?? null));
     const { data } = supabase.auth.onAuthStateChange((_event, session) => setUser(session?.user.email ?? null));
     return () => data.subscription.unsubscribe();
   }, []);
   const signIn = async () => {
+    if (!email.trim() || !password) { setMessage('请输入邮箱和密码'); return; }
+    setBusy(true);
     setMessage('');
     const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     setMessage(error ? error.message : '登录成功');
+    setBusy(false);
   };
   const signUp = async () => {
+    if (!email.trim() || password.length < 6) { setMessage('请输入邮箱，密码至少 6 位'); return; }
+    setBusy(true);
     setMessage('');
     const { error } = await supabase.auth.signUp({ email: email.trim(), password });
     setMessage(error ? error.message : '注册成功，请按项目邮件确认设置完成登录。');
+    setBusy(false);
   };
   return (
     <div className="page">
@@ -31,8 +38,8 @@ export function AuthView() {
         ) : (
           <>
             <TextField label="邮箱" value={email} onChange={setEmail} />
-            <TextField label="密码" value={password} onChange={setPassword} password />
-            <div className="action-row"><Button variant="primary" onClick={() => void signIn()}>登录</Button><Button onClick={() => void signUp()}>注册</Button></div>
+            <TextField label="密码" value={password} onChange={setPassword} password placeholder="至少 6 位" />
+            <div className="action-row"><Button variant="primary" disabled={busy} onClick={() => void signIn()}>{busy ? '处理中…' : '登录'}</Button><Button disabled={busy} onClick={() => void signUp()}>注册</Button></div>
           </>
         )}
         {message ? <StatusNote>{message}</StatusNote> : null}
