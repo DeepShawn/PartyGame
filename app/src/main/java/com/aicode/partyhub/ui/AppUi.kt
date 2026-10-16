@@ -40,6 +40,7 @@ class AppUi(private val activity: AppCompatActivity, private val callbacks: Call
         fun onLeave()
         fun onHint()
         fun onSettingsChanged()
+        fun onAuth()
     }
 
     private val store = AppearanceStore(activity)
@@ -374,6 +375,7 @@ class AppUi(private val activity: AppCompatActivity, private val callbacks: Call
         parent.addView(s.button("思考时间：${settings.aiThinkTimeMs} 毫秒") {
             choose("AI 思考时间预算", listOf("500 毫秒", "1000 毫秒", "2000 毫秒", "4000 毫秒")) { change(settings.copy(aiThinkTimeMs = listOf(500, 1000, 2000, 4000)[it]), true) }
         }, s.space())
+        parent.addView(s.button("账号与成绩 / 登录注册") { callbacks.onAuth() }, s.space(bottom = 10))
         parent.addView(s.text("纯原生 Android 界面 · 设置保存在此设备\n同屏纸牌会在换手时遮挡，请把设备交给对应玩家。", 14f, color = s.colors.muted), s.space(top = 24))
     }
 

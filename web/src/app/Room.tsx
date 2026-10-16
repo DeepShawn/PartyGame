@@ -1,5 +1,5 @@
 /** 房间界面：成员列表、房主开局控制、邀请二维码与对局接管。 */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import QRCode from 'qrcode';
 import { findGame, gameCatalog } from '../core/engine';
 import type { GameSnapshot, GameInfo } from '../net/types';
@@ -9,6 +9,7 @@ import type { GuestRoom } from '../modes/guestRoom';
 import type { RoomState } from '../modes/room';
 import { CopyIcon } from './Icons';
 import { Badge, Button, Card, Modal, SectionTitle, Segmented, StatusNote } from './Ui';
+import { recordGame } from '../services/leaderboard';
 
 type AnyRoom = HostRoom | GuestRoom;
 
@@ -18,6 +19,7 @@ export function RoomScreen({ client, onExit }: { client: AnyRoom; onExit: (reaso
   const [invite, setInvite] = useState('');
   const [copied, setCopied] = useState('');
   const [confirmLeave, setConfirmLeave] = useState(false);
+  const recorded = useRef(false);
 
   useEffect(() => client.subscribe(setState), [client]);
 
@@ -40,6 +42,22 @@ export function RoomScreen({ client, onExit }: { client: AnyRoom; onExit: (reaso
       .catch(() => { if (alive) setInvite(''); });
     return () => { alive = false; };
   }, [hostClient, guestClient]);
+
+  useEffect(() => {
+    if (!state.snapshot?.game || state.snapshot.phase !== 'playing') recorded.current = false;
+    const game = state.snapshot?.game;
+    if (!game || game.winner === null || recorded.current) return;
+    recorded.current = true;
+    const result = game.winner === -1 ? 'draw' : game.winner === state.snapshot?.yourSeat ? 'win' : 'loss';
+    void recordGame({
+      game_id: game.gameId,
+      player_name: state.snapshot?.members.find((member) => member.seat === state.snapshot?.yourSeat)?.name ?? '联机玩家',
+      room_id: state.snapshot?.roomId,
+      score: game.scores[state.snapshot?.yourSeat ?? 0] ?? 0,
+      result,
+      metadata: { source: 'web-room', matchId: state.snapshot?.matchId },
+    }).catch(() => undefined);
+  }, [state.snapshot]);
 
   const copyText = (value: string, label: string) => {
     void navigator.clipboard?.writeText(value).then(

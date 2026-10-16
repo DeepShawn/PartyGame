@@ -1,7 +1,11 @@
 package com.aicode.partyhub
 
+import android.app.AlertDialog
 import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.text.InputType
+import android.widget.EditText
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.aicode.partyhub.core.GameAction
 import com.aicode.partyhub.core.GameSnapshot
@@ -16,6 +20,7 @@ import com.aicode.partyhub.net.WebRtcTransport
 import com.aicode.partyhub.room.RoomSnapshot
 import com.aicode.partyhub.settings.AppearanceStore
 import com.aicode.partyhub.ui.AppUi
+import com.aicode.partyhub.net.SupabaseAuthClient
 import com.aicode.partyhub.ui.UiLanRoom
 import java.net.Inet4Address
 import java.net.NetworkInterface
@@ -61,6 +66,7 @@ class MainActivity : AppCompatActivity(), GameCoordinator.Listener {
     }
 
     private val uiCallbacks = object : AppUi.Callbacks {
+        override fun onAuth() = showAuthDialog()
         override fun onLocal(gameId: String, humans: Int, total: Int) = startLocal(gameId, humans, total)
         override fun onHost(gameId: String, total: Int, password: String, online: Boolean) =
             if (online) startInternetHost(gameId, total, password) else startLanHost(gameId, total, password)
@@ -95,8 +101,20 @@ class MainActivity : AppCompatActivity(), GameCoordinator.Listener {
         }
     }
 
+    private lateinit var authClient: SupabaseAuthClient
+    private fun showAuthDialog() {
+        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(40, 8, 40, 0) }
+        val email = EditText(this).apply { hint = "邮箱" }; val password = EditText(this).apply { hint = "密码"; inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD }
+        box.addView(email); box.addView(password)
+        AlertDialog.Builder(this).setTitle("账号与成绩").setView(box).setMessage(authClient.email()?.let { "当前账号：$it" } ?: "登录后成绩会同步到排行榜")
+            .setPositiveButton("登录") { _, _ -> authClient.signIn(email.text.toString(), password.text.toString()) { ok, msg -> runOnUiThread { ui.showStatus(msg) } } }
+            .setNeutralButton("注册") { _, _ -> authClient.signUp(email.text.toString(), password.text.toString()) { ok, msg -> runOnUiThread { ui.showStatus(msg) } } }
+            .setNegativeButton(if (authClient.email() == null) "关闭" else "退出登录") { _, _ -> if (authClient.email() != null) { authClient.signOut(); ui.showStatus("已退出登录") } }.show()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        authClient = SupabaseAuthClient(this)
         store = AppearanceStore(this)
         settings = store.load()
         coordinator = GameCoordinator(this, this)

@@ -2,6 +2,7 @@
 import { FONT_SCALES, useSettings } from './settings';
 import { THEMES, type ThemeId } from './theme';
 import { Card, SectionTitle, Segmented, Toggle } from './Ui';
+import { AuthView } from './AuthView';
 
 export function AppearanceView() {
   const { settings, update, palettes } = useSettings();
@@ -81,6 +82,7 @@ export function SettingsView() {
           onChange={(value) => update({ confirmMoves: value })}
         />
       </Card>
+      <AuthView />
       <Card>
         <h3 className="card-title">离线 AI 难度</h3>
         <Segmented

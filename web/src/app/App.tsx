@@ -1,5 +1,5 @@
 /** 应用外壳：底部导航（桌面为侧栏）、四个页面、本机对局与联机房间的全屏接管。 */
-import { useCallback, useEffect, useMemo, useState, type ReactElement } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
 import { findGame } from '../core/engine';
 import type { GameInfo, GameSnapshot } from '../net/types';
 import { GuestRoom } from '../modes/guestRoom';
@@ -13,12 +13,15 @@ import { NetLobby } from './NetLobby';
 import { RoomScreen } from './Room';
 import { SettingsProvider } from './settings';
 import { Button, StatusNote } from './Ui';
+import { recordGame } from '../services/leaderboard';
+import { LeaderboardView } from './LeaderboardView';
 
-type Tab = 'games' | 'net' | 'look' | 'set';
+type Tab = 'games' | 'net' | 'rank' | 'look' | 'set';
 
 const NAV: { id: Tab; label: string; icon: () => ReactElement }[] = [
   { id: 'games', label: '游戏', icon: GamesIcon },
   { id: 'net', label: '联机', icon: NetIcon },
+  { id: 'rank', label: '排行', icon: GamesIcon },
   { id: 'look', label: '外观', icon: PaletteIcon },
   { id: 'set', label: '设置', icon: SettingsIcon },
 ];
@@ -183,6 +186,7 @@ function Shell() {
             onLocalSetup={openLocalSetup}
           />
         ) : null}
+        {tab === 'rank' ? <LeaderboardView /> : null}
         {tab === 'look' ? <AppearanceView /> : null}
         {tab === 'set' ? <SettingsView /> : null}
       </main>
@@ -216,12 +220,27 @@ function LocalScreen({
 }) {
   const [snapshot, setSnapshot] = useState<GameSnapshot | null>(null);
   const [notice, setNotice] = useState('');
+  const recorded = useRef(false);
 
   useEffect(() => {
+    recorded.current = false;
     const unsubscribe = match.subscribe(setSnapshot);
     match.start();
     return unsubscribe;
   }, [match]);
+
+  useEffect(() => {
+    if (!snapshot || snapshot.winner === null || recorded.current) return;
+    recorded.current = true;
+    const result = snapshot.winner === -1 ? 'draw' : snapshot.winner === match.viewer() ? 'win' : 'loss';
+    void recordGame({
+      game_id: match.gameId,
+      player_name: '本机玩家',
+      score: snapshot.scores[match.viewer()] ?? 0,
+      result,
+      metadata: { source: 'web-local', players: match.players },
+    }).catch(() => undefined);
+  }, [snapshot, match]);
 
   const localSeats = useMemo(() => Array.from({ length: match.players }, (_, seat) => seat), [match]);
 

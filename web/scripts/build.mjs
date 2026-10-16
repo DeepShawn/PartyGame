@@ -117,6 +117,7 @@ async function main() {
   });
 
   await cp(join(webRoot, 'index.html'), join(dist, 'index.html'));
+  if (existsSync(join(webRoot, 'admin.html'))) await cp(join(webRoot, 'admin.html'), join(dist, 'admin.html'));
   await writeFile(join(dist, '.nojekyll'), '');
   await copyIcons();
   await copyStockfish();
