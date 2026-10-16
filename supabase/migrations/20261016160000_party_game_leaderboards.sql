@@ -43,6 +43,13 @@ insert into public.game_leaderboards(game_id, title, category) values
   ('tictactoe','井字棋','board'), ('connect4','四子棋','board')
 on conflict (game_id) do update set title = excluded.title, category = excluded.category;
 
+insert into public.game_leaderboards(game_id, title, category) values
+  ('coinflip','硬币猜正反','arcade'), ('numberguess','数字猜猜看','arcade'), ('oddone','找出不同','arcade'),
+  ('targettap','目标点击','arcade'), ('pattern','图案记忆','arcade'), ('sumten','凑十挑战','arcade'),
+  ('highlow','高低判断','arcade'), ('color_match','颜色配对','arcade'), ('memoryrush','极速记忆','arcade'),
+  ('speedchoice','极速四选一','arcade')
+on conflict (game_id) do update set title = excluded.title, category = excluded.category;
+
 alter table public.game_leaderboards enable row level security;
 alter table public.game_records enable row level security;
 
