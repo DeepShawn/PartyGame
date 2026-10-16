@@ -18,6 +18,8 @@ import com.aicode.partyhub.games.board.GoGame
 import com.aicode.partyhub.games.board.GomokuGame
 import com.aicode.partyhub.games.board.ReversiGame
 import com.aicode.partyhub.games.board.XiangqiGame
+import com.aicode.partyhub.games.board.TicTacToeGame
+import com.aicode.partyhub.games.board.ConnectFourGame
 import com.aicode.partyhub.games.cards.DouDizhuGame
 import java.io.File
 
@@ -41,6 +43,8 @@ object GameFactory {
             "chinese_checkers" -> ChineseCheckersGame(config)
             "draughts" -> DraughtsGame(config)
             "doudizhu" -> DouDizhuGame(config)
+            "tictactoe" -> TicTacToeGame(config)
+            "connect4" -> ConnectFourGame(config)
             else -> null
         }
     }

@@ -34,6 +34,8 @@ object GameCatalog {
         GameInfo("chinese_checkers", "中国跳棋", "跳过阻碍，抢先到家", "board", "每人10枚棋子，目标是全部移入对面营地。可相邻一步或连续跳过紧邻棋子，跳跃不吃子；两人相对、三人间隔入座。", bot = true),
         GameInfo("draughts", "国际跳棋", "百格棋盘，连跳制胜", "board", "10×10棋盘，每人20子，白先。普通子向前走一步，可向前或后吃子；有吃必吃并选择吃子数最多的路线。王沿斜线远行，连吃结束才移除被吃子、判定升王。", maxPlayers = 2, bot = true),
         GameInfo("doudizhu", "斗地主", "一副牌，三人好时光", "cards", "54张牌、3个席位，缺人由AI补齐。轮流叫1至3分，最高分者拿3张底牌成为地主。支持顺子、连对、飞机、四带二、炸弹和王炸。地主先出完获胜，任一农民先出完则农民方胜；同机真人换手时遮屏。", minPlayers = 3, bot = true)
+        ,GameInfo("tictactoe", "井字棋", "三连取胜，轻松开局", "board", "双方轮流在3×3棋盘落子，横、竖或斜线连成三子获胜，棋盘填满则平局。", maxPlayers = 2, bot = true)
+        ,GameInfo("connect4", "四子棋", "落子连接四子", "board", "轮流选择列落子，棋子向下堆叠；横、竖或斜线连成四子获胜。", maxPlayers = 2, bot = true)
     )
     fun find(id: String): GameInfo = entries.first { it.id == id }
 }

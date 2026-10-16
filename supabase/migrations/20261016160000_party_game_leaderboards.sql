@@ -39,6 +39,10 @@ insert into public.game_leaderboards(game_id, title, category) values
   ('doudizhu','斗地主','cards')
 on conflict (game_id) do update set title = excluded.title, category = excluded.category;
 
+insert into public.game_leaderboards(game_id, title, category) values
+  ('tictactoe','井字棋','board'), ('connect4','四子棋','board')
+on conflict (game_id) do update set title = excluded.title, category = excluded.category;
+
 alter table public.game_leaderboards enable row level security;
 alter table public.game_records enable row level security;
 

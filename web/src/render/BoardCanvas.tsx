@@ -419,17 +419,24 @@ function drawPiece(
       context.font = `${step * 0.92}px "Segoe UI Symbol", "Noto Sans Symbols 2", "DejaVu Sans", serif`;
       context.textAlign = 'center';
       context.textBaseline = 'middle';
+      context.shadowColor = value > 0 ? 'rgba(0,0,0,.42)' : 'rgba(255,255,255,.18)';
+      context.shadowBlur = Math.max(2, step * 0.08);
+      context.shadowOffsetY = step * 0.035;
       context.lineWidth = Math.max(1, step * 0.04);
       context.strokeStyle = 'rgba(23, 33, 39, 0.9)';
       context.strokeText(glyph, cx, cy);
       context.fillStyle = value > 0 ? '#FFFFFF' : '#1B252B';
       context.fillText(glyph, cx, cy);
+      context.shadowColor = 'transparent';
       break;
     }
     case 'xiangqi': {
       const glyphs = value > 0 ? XIANGQI_RED : XIANGQI_BLACK;
       const glyph = glyphs[Math.min(glyphs.length - 1, Math.abs(value))] ?? '';
       context.fillStyle = '#FFF1CF';
+      context.shadowColor = 'rgba(0,0,0,.35)';
+      context.shadowBlur = Math.max(2, step * 0.08);
+      context.shadowOffsetY = step * 0.04;
       context.beginPath();
       context.arc(cx, cy, step * 0.43, 0, Math.PI * 2);
       context.fill();
@@ -439,6 +446,7 @@ function drawPiece(
       context.arc(cx, cy, step * 0.4, 0, Math.PI * 2);
       context.stroke();
       drawLabel(context, glyph, cx, cy, step * 0.6, context.strokeStyle as string);
+      context.shadowColor = 'transparent';
       break;
     }
     case 'go':
@@ -451,6 +459,9 @@ function drawPiece(
       context.beginPath();
       context.arc(cx, cy, step * 0.44, 0, Math.PI * 2);
       context.fillStyle = black ? '#1D262A' : '#FAFAF6';
+      context.shadowColor = black ? 'rgba(0,0,0,.55)' : 'rgba(0,0,0,.28)';
+      context.shadowBlur = Math.max(2, step * 0.08);
+      context.shadowOffsetY = step * 0.04;
       context.fill();
       context.strokeStyle = black ? 'rgba(255, 255, 255, 0.12)' : 'rgba(60, 66, 64, 0.4)';
       context.lineWidth = 1;
