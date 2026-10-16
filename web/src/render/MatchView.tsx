@@ -38,6 +38,9 @@ export function MatchView({ snapshot, viewer, localSeats, members, onAction, onL
   const [promotion, setPromotion] = useState<GameAction[] | null>(null);
   const [legalOpen, setLegalOpen] = useState(false);
   const [rulesOpen, setRulesOpen] = useState(false);
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [reviewIndex, setReviewIndex] = useState(0);
+  const [reviewFrames, setReviewFrames] = useState<GameSnapshot[]>([]);
   const [confirming, setConfirming] = useState<GameAction | null>(null);
   const [revealedSeat, setRevealedSeat] = useState<number | null>(null);
   const [handoverSkipped, setHandoverSkipped] = useState(false);
@@ -138,6 +141,17 @@ export function MatchView({ snapshot, viewer, localSeats, members, onAction, onL
   }, [snapshot, gameId]);
 
   useEffect(() => {
+    if (info?.category !== 'board') return;
+    setReviewFrames((frames) => {
+      const last = frames[frames.length - 1];
+      if (last && last.tick === snapshot.tick && last.winner === snapshot.winner) return frames;
+      const next = [...frames, snapshot].slice(-160);
+      setReviewIndex(next.length - 1);
+      return next;
+    });
+  }, [snapshot, info?.category]);
+
+  useEffect(() => {
     const key = `${viewer}|${seatsKey}`;
     if (previousView.current === key) return;
     previousView.current = key;
@@ -232,7 +246,7 @@ export function MatchView({ snapshot, viewer, localSeats, members, onAction, onL
       <header className="match-head">
         <Button compact onClick={onLeave}>离开</Button>
         <h2>{info?.title ?? gameId}</h2>
-        <Button compact onClick={() => setRulesOpen(true)}>规则</Button>
+        <div className="match-head-actions"><Button compact onClick={() => setRulesOpen(true)}>规则</Button>{info?.category === 'board' ? <Button compact onClick={() => setReviewOpen(true)}>复盘</Button> : null}</div>
       </header>
 
       <div className="score-row">
@@ -362,6 +376,14 @@ export function MatchView({ snapshot, viewer, localSeats, members, onAction, onL
       {rulesOpen ? (
         <Modal title={info?.title ?? gameId} subtitle={info?.subtitle} onClose={() => setRulesOpen(false)} wide>
           <p className="rules-text">{snapshot.extra['rules'] ?? info?.rules ?? '暂无规则说明。'}</p>
+        </Modal>
+      ) : null}
+      {reviewOpen && info?.category === 'board' ? (
+        <Modal title="棋局复盘" subtitle="拖动进度查看每一步局面" onClose={() => setReviewOpen(false)} wide>
+          <div className="review-toolbar"><strong>第 {reviewIndex} 手 / {Math.max(0, reviewFrames.length - 1)}</strong><Button compact disabled={reviewIndex <= 0} onClick={() => setReviewIndex((v) => Math.max(0, v - 1))}>上一手</Button><Button compact disabled={reviewIndex >= reviewFrames.length - 1} onClick={() => setReviewIndex((v) => Math.min(reviewFrames.length - 1, v + 1))}>下一手</Button></div>
+          <input className="review-slider" type="range" min={0} max={Math.max(0, reviewFrames.length - 1)} value={reviewIndex} onChange={(e) => setReviewIndex(Number(e.target.value))} aria-label="复盘进度" />
+          {reviewFrames[reviewIndex] ? <BoardCanvas snapshot={reviewFrames[reviewIndex]} palette={palette} coordinates={settings.coordinates} highlights={new Set()} selected={[]} onCell={() => undefined} /> : <p>暂无复盘记录</p>}
+          <p className="card-hint">{reviewFrames[reviewIndex]?.message ?? '暂无局面说明'} · 可在规则中查看完整玩法。</p>
         </Modal>
       ) : null}
 

@@ -255,7 +255,12 @@ class GoGame(config: GameConfig) : GameEngine {
         }
     )
 
-    override fun botAction(seat: Int, difficulty: Int): GameAction? = null
+    override fun botAction(seat: Int, difficulty: Int): GameAction? {
+        if (winner != null || seat != turn) return null
+        val center = (size / 2) * size + size / 2
+        val candidate = listOf(center) + (0 until cells.size).filter { it != center && cells[it] == 0 }
+        return candidate.firstOrNull { cells[it] == 0 }?.let { GameAction("place", listOf(it)) } ?: GameAction("pass")
+    }
 
     companion object {
         private const val LETTERS = "ABCDEFGHJKLMNOPQRST"

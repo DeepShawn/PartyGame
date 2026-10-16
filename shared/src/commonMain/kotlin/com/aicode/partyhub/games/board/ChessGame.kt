@@ -107,7 +107,10 @@ class ChessGame(config: GameConfig) : GameEngine {
         )
     }
 
-    override fun botAction(seat: Int, difficulty: Int): GameAction? = null
+    override fun botAction(seat: Int, difficulty: Int): GameAction? {
+        if (winner != null || seat != position.turn) return null
+        return moves.firstOrNull { it.promotion != 0 }?.action() ?: moves.firstOrNull()?.action()
+    }
 
     companion object {
         private const val START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"

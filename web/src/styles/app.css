@@ -844,6 +844,10 @@ html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-
   gap: 14px;
   padding: 4px 18px 20px;
 }
+.match-head-actions { display: flex; gap: 6px; }
+.review-toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.review-toolbar strong { margin-right: auto; }
+.review-slider { width: 100%; accent-color: var(--accent); }
 
 .toast {
   position: fixed;
