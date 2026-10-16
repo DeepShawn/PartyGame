@@ -249,9 +249,9 @@ internal class GameScreen(
 
     private fun updateSelection() {
         val s = snapshot ?: return
-        val targets = if (!actionable(viewer) || choosingPromotion) emptySet() else if (path.isNotEmpty() && pending == null) {
+        val targets = if (!actionable(viewer) || choosingPromotion || gameId !in listOf("chess", "xiangqi", "draughts")) emptySet() else if (path.isNotEmpty() && pending == null) {
             GameInput.nextTargets(s.legal, path)
-        } else s.legal.mapNotNull { if (it.type in listOf("move", "place", "flip", "dead")) it.values.firstOrNull() else null }.toSet()
+        } else emptySet()
         board.update(s, targets, path)
         confirm.isEnabled = pending != null && actionable(viewer)
         clear.isEnabled = path.isNotEmpty() || pending != null

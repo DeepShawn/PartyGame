@@ -171,15 +171,10 @@ export function MatchView({ snapshot, viewer, localSeats, members, onAction, onL
 
   const targets = useMemo(() => {
     if (!actionable(viewer)) return new Set<number>();
+    if (!['chess', 'xiangqi', 'draughts'].includes(gameId)) return new Set<number>();
     if (path.length > 0 && !pending) return nextTargets(snapshot.legal, path);
-    const values = new Set<number>();
-    for (const action of snapshot.legal) {
-      if (action.type === 'move' || action.type === 'place' || action.type === 'flip' || action.type === 'dead') {
-        if (action.values.length > 0) values.add(action.values[0]);
-      }
-    }
-    return values;
-  }, [snapshot.legal, path, pending, viewer, actionable]);
+    return new Set<number>();
+  }, [snapshot.legal, path, pending, viewer, actionable, gameId]);
 
   const extraActions = useMemo(() => {
     const relevant = snapshot.legal.filter((action) => ['resign', 'pass', 'accept_score', 'resume', 'claim_draw', 'bid', 'hint'].includes(action.type));
