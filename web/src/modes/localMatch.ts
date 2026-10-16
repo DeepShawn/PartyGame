@@ -152,7 +152,7 @@ export class LocalMatch {
   private async botMove(seat: number): Promise<void> {
     try {
       const view = this.engine.snapshot(seat);
-      if (view.winner !== null || view.phase === 'finished' || view.turn !== seat) return;
+      if (view.winner !== null || view.phase === 'finished' || (view.turn >= 0 && view.turn !== seat)) return;
       let action: GameAction | null = null;
       if (this.gameId === 'chess') {
         const uci = await chessBestMove(view.extra['fen'] ?? '', this.difficulty);
