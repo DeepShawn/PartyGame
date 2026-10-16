@@ -579,6 +579,11 @@ html[data-motion="reduced"] *::after {
 .search-wrap .search { width: 100%; padding-right: 2.4rem; }
 .search-clear { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border: 0; border-radius: 50%; background: transparent; color: var(--muted); font-size: 1.25rem; cursor: pointer; }
 .search-clear:hover { background: var(--soft); color: var(--accent); }
+.leaderboard-picker { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 8px; margin-bottom: 18px; }
+.leaderboard-game { min-height: 58px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 5px; padding: 9px 11px; border: 1px solid var(--border); border-radius: 14px; background: var(--bg); color: var(--text); text-align: left; cursor: pointer; transition: transform .14s ease, border-color .14s ease, background .14s ease; }
+.leaderboard-game:hover { transform: translateY(-1px); border-color: var(--accent); }
+.leaderboard-game:active { transform: scale(.97); }
+.leaderboard-game-active { border-color: var(--accent); background: var(--soft); box-shadow: var(--shadow-1); }
 
 .game-cell {
   display: flex;

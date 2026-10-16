@@ -11,6 +11,7 @@ import com.aicode.partyhub.games.arcade.MemoryGame
 import com.aicode.partyhub.games.arcade.ReactionGame
 import com.aicode.partyhub.games.arcade.SnakeGame
 import com.aicode.partyhub.games.arcade.TankGame
+import com.aicode.partyhub.games.arcade.QuickChallengeGame
 import com.aicode.partyhub.games.board.ChessGame
 import com.aicode.partyhub.games.board.ChineseCheckersGame
 import com.aicode.partyhub.games.board.DraughtsGame
@@ -45,6 +46,7 @@ object GameFactory {
             "doudizhu" -> DouDizhuGame(config)
             "tictactoe" -> TicTacToeGame(config)
             "connect4" -> ConnectFourGame(config)
+            "coinflip", "numberguess", "oddone", "targettap", "pattern", "sumten", "highlow", "color_match", "memoryrush", "speedchoice" -> QuickChallengeGame(config, gameId)
             else -> null
         }
     }
