@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity(), GameCoordinator.Listener {
     private var lastRoom: RoomSnapshot? = null
     private var lastLinkInfo = ""
     private var matchSeed = 1
+    private var lastRecorded: String? = null
 
     private var tcp: TcpTransport? = null
     private var lanWeb: LanWebServer? = null
@@ -288,6 +289,11 @@ class MainActivity : AppCompatActivity(), GameCoordinator.Listener {
 
     override fun onGame(snapshot: GameSnapshot, localSeats: List<Int>, viewer: Int) {
         ui.showGame(snapshot, localSeats, viewer)
+        val winner = snapshot.winner
+        if (winner != null) {
+            val key = "${snapshot.gameId}:${snapshot.tick}:$winner"
+            if (lastRecorded != key) { lastRecorded = key; val result = if (winner == -1) "draw" else if (winner == viewer) "win" else "loss"; authClient.recordGame(snapshot.gameId, snapshot.scores.getOrElse(viewer) { 0 }, result) }
+        }
     }
 
     override fun onStatus(text: String) {
