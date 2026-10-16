@@ -424,9 +424,9 @@ internal class GameScreen(
                         addButton(taps, "抢按", GameAction("tap"), true)
                         panel.addView(taps, style.space())
                     }
-                    "color", "math" -> repeat(2) { r ->
+                    "color", "math", "coinflip", "numberguess", "oddone", "targettap", "pattern", "sumten", "highlow", "color_match", "memoryrush", "speedchoice" -> repeat(2) { r ->
                         val choices = style.row()
-                        repeat(2) { c -> val index = r * 2 + c; addButton(choices, "${index + 1}", GameAction("answer", listOf(index))) }
+                        repeat(2) { c -> val index = r * 2 + c; val type = if (gameId == "color" || gameId == "math") "answer" else "choose"; addButton(choices, "${snapshot?.labels?.getOrNull(index) ?: "选项 ${index + 1}"}", GameAction(type, listOf(index))) }
                         panel.addView(choices, style.space(bottom = 5))
                     }
                     else -> {
@@ -455,6 +455,7 @@ internal class GameScreen(
         return when (gameId) {
             "reaction" -> action.type == "tap" && s.phase in listOf("waiting", "signal") && s.extra["responses"]?.split(',')?.getOrNull(seat) == "-1"
             "color", "math" -> action.type == "answer" && action.values.singleOrNull() in 0..3 && s.phase == "playing" && s.extra["answered"]?.split(',')?.getOrNull(seat) == "0"
+            "coinflip", "numberguess", "oddone", "targettap", "pattern", "sumten", "highlow", "color_match", "memoryrush", "speedchoice" -> action.type == "choose" && action.values.singleOrNull() in 0..3 && s.phase == "playing"
             "snake", "dodge" -> action.type == "direction" && action.values.singleOrNull() in -1..3
             "tank" -> action.type == "direction" || action.type == "fire"
             "bomber" -> action.type == "direction" || action.type == "bomb"

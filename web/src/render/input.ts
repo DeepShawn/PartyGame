@@ -2,10 +2,12 @@
 import type { GameAction, GameSnapshot } from '../net/types';
 
 export const ARCADE_GAMES = ['reaction', 'color', 'math', 'memory', 'snake', 'tank', 'bomber', 'dodge'];
+const QUICK_TOUCH_GAMES = ['coinflip', 'numberguess', 'oddone', 'targettap', 'pattern', 'sumten', 'highlow', 'color_match', 'memoryrush', 'speedchoice'];
 
 export function isRealtime(gameId: string): boolean {
   return gameId === 'reaction' || gameId === 'color' || gameId === 'math'
-    || gameId === 'snake' || gameId === 'tank' || gameId === 'bomber' || gameId === 'dodge';
+    || gameId === 'snake' || gameId === 'tank' || gameId === 'bomber' || gameId === 'dodge'
+    || QUICK_TOUCH_GAMES.includes(gameId);
 }
 
 export function canAct(snapshot: GameSnapshot | null, localSeats: number[], viewer: number, seat: number): boolean {
@@ -54,6 +56,8 @@ function remoteArcadeAllowed(gameId: string, snapshot: GameSnapshot, seat: numbe
       return action.type === 'answer' && single >= 0 && single <= 3
         && snapshot.phase === 'playing'
         && snapshot.extra['answered']?.split(',')[seat] === '0';
+    case 'coinflip': case 'numberguess': case 'oddone': case 'targettap': case 'pattern': case 'sumten': case 'highlow': case 'color_match': case 'memoryrush': case 'speedchoice':
+      return action.type === 'choose' && single >= 0 && single <= 3 && snapshot.phase === 'playing';
     case 'snake':
     case 'dodge':
       return action.type === 'direction' && single >= -1 && single <= 3;

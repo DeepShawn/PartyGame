@@ -135,13 +135,13 @@ export function ArcadeControls({ snapshot, viewer, localSeats, onAction }: Contr
         <span className="pad-title">{seat + 1} 号</span>
         {snapshot.gameId === 'reaction' ? (
           <div className="pad-row">{actionButton('抢按', { type: 'tap', values: [], text: '' }, true)}</div>
-        ) : snapshot.gameId === 'color' || snapshot.gameId === 'math' ? (
+        ) : snapshot.gameId === 'color' || snapshot.gameId === 'math' || ['coinflip', 'numberguess', 'oddone', 'targettap', 'pattern', 'sumten', 'highlow', 'color_match', 'memoryrush', 'speedchoice'].includes(snapshot.gameId) ? (
           <>
             <div className="pad-row">
-              {[0, 1].map((index) => actionButton(snapshot.labels[index] ?? String(index + 1), { type: 'answer', values: [index], text: '' }))}
+              {[0, 1].map((index) => actionButton(snapshot.labels[index] ?? `选项 ${index + 1}`, { type: snapshot.gameId === 'color' || snapshot.gameId === 'math' ? 'answer' : 'choose', values: [index], text: '' }))}
             </div>
             <div className="pad-row">
-              {[2, 3].map((index) => actionButton(snapshot.labels[index] ?? String(index + 1), { type: 'answer', values: [index], text: '' }))}
+              {[2, 3].map((index) => actionButton(snapshot.labels[index] ?? `选项 ${index + 1}`, { type: snapshot.gameId === 'color' || snapshot.gameId === 'math' ? 'answer' : 'choose', values: [index], text: '' }))}
             </div>
           </>
         ) : (
