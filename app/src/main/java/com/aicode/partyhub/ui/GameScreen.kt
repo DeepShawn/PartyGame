@@ -31,7 +31,7 @@ internal class GameScreen(
     private val controls = style.column(6)
     private val boardControls = style.column()
     private val extras = style.column()
-    private val board = GameCanvas(style, ::selectCell)
+    private val board = GameCanvas(style, ::selectCell) { direction -> if (viewer >= 0) submit(viewer, GameAction("direction", listOf(direction))) }
     private val question = style.text("", 36f, true).apply { gravity = Gravity.CENTER }
     private val publicCards = style.text("", 17f, true)
     private val hand = style.column()

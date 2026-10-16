@@ -12,7 +12,7 @@ import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-internal class GameCanvas(private val style: UiStyle, private val onCell: (Int) -> Unit) : View(style.context) {
+internal class GameCanvas(private val style: UiStyle, private val onCell: (Int) -> Unit, private val onSwipe: ((Int) -> Unit)? = null) : View(style.context) {
     private val fill = Paint(Paint.ANTI_ALIAS_FLAG)
     private val line = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
     private val lettering = Paint(Paint.ANTI_ALIAS_FLAG).apply { textAlign = Paint.Align.CENTER; typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL) }
@@ -36,6 +36,8 @@ internal class GameCanvas(private val style: UiStyle, private val onCell: (Int) 
     private var gridWidth = 0f
     private var gridHeight = 0f
     private var touched = -1
+    private var touchX = 0f
+    private var touchY = 0f
     private var keyboardCell = 0
 
     init {
@@ -238,8 +240,14 @@ internal class GameCanvas(private val style: UiStyle, private val onCell: (Int) 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!isEnabled) return false
         when (event.actionMasked) {
-            MotionEvent.ACTION_DOWN -> { touched = hit(event.x, event.y); return touched >= 0 }
+            MotionEvent.ACTION_DOWN -> { touchX = event.x; touchY = event.y; touched = hit(event.x, event.y); return true }
             MotionEvent.ACTION_UP -> {
+                val dx = event.x - touchX; val dy = event.y - touchY
+                if (snapshot?.gameId in listOf("snake", "tank", "bomber", "dodge") && kotlin.math.max(kotlin.math.abs(dx), kotlin.math.abs(dy)) >= style.dp(24)) {
+                    onSwipe?.invoke(if (kotlin.math.abs(dx) > kotlin.math.abs(dy)) if (dx > 0) 1 else 3 else if (dy > 0) 2 else 0)
+                    touched = -1
+                    return true
+                }
                 val cell = hit(event.x, event.y)
                 if (cell >= 0 && cell == touched) { keyboardCell = cell; performClick(); onCell(cell) }
                 touched = -1

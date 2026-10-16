@@ -1,5 +1,5 @@
 /** 对局主界面：本机同屏与联机共用。所有裁决在引擎/房主端，本组件只负责选择、确认与提交。 */
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type TouchEvent } from 'react';
 import { findGame } from '../core/engine';
 import type { GameAction, GameSnapshot, RoomMember } from '../net/types';
 import { useSettings } from '../app/settings';
@@ -49,6 +49,7 @@ export function MatchView({ snapshot, viewer, localSeats, members, onAction, onL
   const previous = useRef<GameSnapshot | null>(null);
   const previousView = useRef('');
   const previousPhase = useRef(snapshot.phase);
+  const gestureStart = useRef<{ x: number; y: number } | null>(null);
   const seatsKey = localSeats.join(',');
 
   const notify = useCallback((message: string) => {
@@ -240,6 +241,18 @@ export function MatchView({ snapshot, viewer, localSeats, members, onAction, onL
 
   const handoverVisible = Boolean(handover) && gameId === 'doudizhu' && localSeats.length > 1 && !handVisible
     && !handoverSkipped && snapshot.phase !== 'finished' && viewer >= 0;
+  const gestureGame = ['snake', 'tank', 'bomber', 'dodge'].includes(gameId);
+  const onGestureStart = (event: TouchEvent<HTMLDivElement>) => {
+    if (gestureGame && event.touches.length === 1) gestureStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+  };
+  const onGestureEnd = (event: TouchEvent<HTMLDivElement>) => {
+    const start = gestureStart.current; gestureStart.current = null;
+    if (!start || !gestureGame || event.changedTouches.length === 0) return;
+    const touch = event.changedTouches[0]; const dx = touch.clientX - start.x; const dy = touch.clientY - start.y;
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < 28) return;
+    const direction = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 1 : 3) : (dy > 0 ? 2 : 0);
+    submit(viewer, { type: 'direction', values: [direction], text: '' });
+  };
 
   return (
     <div className="match">
@@ -266,7 +279,7 @@ export function MatchView({ snapshot, viewer, localSeats, members, onAction, onL
       </div>
 
       <div className="match-body">
-        <div className="match-main">
+        <div className={`match-main${gestureGame ? ' gesture-surface' : ''}`} onTouchStart={onGestureStart} onTouchEnd={onGestureEnd} onTouchCancel={() => { gestureStart.current = null; }}>
           {gameId === 'reaction' || gameId === 'color' || gameId === 'math' ? (
             <ArcadeStage snapshot={snapshot} sound={settings.sound} />
           ) : gameId === 'doudizhu' ? (
