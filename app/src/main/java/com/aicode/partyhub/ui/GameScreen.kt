@@ -107,7 +107,6 @@ internal class GameScreen(
             buttons.addView(confirm, LinearLayout.LayoutParams(0, -2, 1f).apply { marginEnd = style.dp(6) })
             buttons.addView(clear, LinearLayout.LayoutParams(0, -2, 1f))
             controls.addView(buttons, style.space(bottom = 8))
-            controls.addView(accessibleMoves, style.space(bottom = 8))
         }
         controls.addView(boardControls, style.space())
         controls.addView(extras, style.space(top = 8))
@@ -209,6 +208,7 @@ internal class GameScreen(
     private fun selectCell(index: Int) {
         val s = snapshot ?: return
         if (!actionable(viewer)) return
+        if (pending != null && pending!!.values.lastOrNull() == index) { submit(viewer, pending!!); return }
         val direct = s.legal.firstOrNull { it.type in listOf("place", "flip", "dead") && it.values == listOf(index) }
         if (direct != null) {
             path = listOf(index)
@@ -243,6 +243,7 @@ internal class GameScreen(
     private fun propose(action: GameAction) {
         val s = snapshot ?: return
         if (!actionable(viewer) || action !in s.legal) return
+        if (pending != null && pending == action) { submit(viewer, action); return }
         pending = action
         if (!style.settings.confirmMoves) submit(viewer, action) else updateSelection()
     }

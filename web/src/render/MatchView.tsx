@@ -88,12 +88,14 @@ export function MatchView({ snapshot, viewer, localSeats, members, onAction, onL
   const propose = useCallback((action: GameAction) => {
     if (!actionable(viewer)) return;
     if (!snapshot.legal.some((entry) => sameAction(entry, action))) return;
+    if (pending && sameAction(pending, action)) { submit(viewer, action); return; }
     setPending(action);
     if (!settings.confirmMoves) submit(viewer, action);
   }, [actionable, viewer, snapshot.legal, settings.confirmMoves, submit]);
 
   const selectCell = useCallback((index: number) => {
     if (!actionable(viewer)) return;
+    if (pending && pending.values[pending.values.length - 1] === index) { submit(viewer, pending); return; }
     const direct = snapshot.legal.find((action) => (action.type === 'place' || action.type === 'flip' || action.type === 'dead')
       && action.values.length === 1 && action.values[0] === index);
     if (direct) {
@@ -309,7 +311,6 @@ export function MatchView({ snapshot, viewer, localSeats, members, onAction, onL
                 <Button variant="primary" compact disabled={!pending || !actionable(viewer)} onClick={() => pending && submit(viewer, pending)}>确认落子</Button>
                 <Button compact disabled={path.length === 0 && !pending} onClick={() => { setPath([]); setPending(null); }}>重新选择</Button>
               </div>
-              <Button compact block disabled={!actionable(viewer) || snapshot.legal.length === 0} onClick={() => setLegalOpen(true)}>合法走法列表</Button>
             </>
           ) : null}
 

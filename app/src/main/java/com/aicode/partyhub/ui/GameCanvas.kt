@@ -128,6 +128,8 @@ internal class GameCanvas(private val style: UiStyle, private val onCell: (Int) 
                 canvas.drawCircle(cx, cy, step * 0.07f, fill)
             }
             if (index in selected || (hasFocus() && index == keyboardCell)) {
+                fill.color = Color.argb(46, 204, 116, 13)
+                canvas.drawRoundRect(cx - step * 0.46f, cy - step * 0.46f, cx + step * 0.46f, cy + step * 0.46f, step * 0.12f, step * 0.12f, fill)
                 line.color = Color.rgb(204, 116, 13); line.strokeWidth = (step * 0.085f).coerceAtLeast(2f)
                 canvas.drawRoundRect(cx - step * 0.46f, cy - step * 0.46f, cx + step * 0.46f, cy + step * 0.46f, step * 0.12f, step * 0.12f, line)
             }

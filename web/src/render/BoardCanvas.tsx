@@ -339,6 +339,10 @@ function drawBoard(
         context.fill();
       }
       if (selected.includes(index)) {
+        context.fillStyle = withAlpha(AMBER, 0.18);
+        context.beginPath();
+        context.roundRect(cx - step * 0.46, cy - step * 0.46, step * 0.92, step * 0.92, Math.min(8, step * 0.12));
+        context.fill();
         context.strokeStyle = AMBER;
         context.lineWidth = Math.max(2, step * 0.085);
         context.beginPath();
