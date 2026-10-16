@@ -292,7 +292,6 @@ export class HostSession {
     const snapshot = this.snapshot();
     const view = snapshot.game;
     if (!view) return;
-    const webBotCapable = findGame(snapshot.gameId).webBot;
     const seats = this.room.botSeats();
     for (const seat of seats) {
       if (view.winner !== null || view.phase === 'finished') continue;
@@ -301,14 +300,9 @@ export class HostSession {
       let task = this.botTasks.get(seat);
       if (!task) { task = { seat, running: false }; this.botTasks.set(seat, task); }
       if (task.running) continue;
-      if (!webBotCapable && this.requiresExternalEngine(snapshot.gameId)) continue;
       task.running = true;
       void this.botMove(engine, seat, view).finally(() => { task!.running = false; });
     }
-  }
-
-  private requiresExternalEngine(gameId: string): boolean {
-    return gameId === 'go' || gameId === 'chess';
   }
 
   private async botMove(engine: EngineApi, seat: number, view: import('../net/types').GameSnapshot): Promise<void> {
@@ -320,6 +314,7 @@ export class HostSession {
       } else {
         action = engine.botAction(seat, this.difficulty);
       }
+      action = action ?? view.legal[0] ?? null;
       if (action && !this.closed) {
         this.room.applyBot(seat, this.matchId, action);
         this.broadcast();

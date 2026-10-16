@@ -136,22 +136,13 @@ export function LocalSetupModal({
                 { value: 'bot', label: '电脑' },
               ]}
               onChange={(value) => {
-                if (value === 'bot' && !game.webBot) return;
                 toggleBot(seat);
               }}
             />
           </div>
         ))}
       </div>
-      {!game.webBot ? (
-        <p className="card-hint">
-          {game.id === 'go'
-            ? '围棋的离线 AI 需要安卓房主建立对局；本机对局请全部选择真人。'
-            : '这款游戏暂未提供离线 AI，联机房间中可以由其他玩家补位。'}
-        </p>
-      ) : (
-        <p className="card-hint">电脑席位会在自己回合自动行动；国际象棋使用浏览器内置 Stockfish，思考时间随难度增加。</p>
-      )}
+      <p className="card-hint">电脑席位会在自己回合自动行动；棋类使用规则 AI，国际象棋优先使用浏览器内置 Stockfish。</p>
       <Segmented
         label="AI 难度"
         value={difficulty}

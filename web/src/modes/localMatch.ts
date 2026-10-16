@@ -31,13 +31,7 @@ export class LocalMatch {
   private currentViewer = 0;
 
   constructor(options: LocalMatchOptions) {
-    const info = findGame(options.gameId);
     const bots = options.bots.filter((seat) => seat >= 0 && seat < options.players);
-    if (bots.length > 0 && !info.webBot) {
-      throw new Error(options.gameId === 'go'
-        ? '围棋的离线 AI 需要安卓房主建立对局，本机同屏请选择真人席位。'
-        : '这款游戏暂不提供离线 AI，请把全部席位设为真人。');
-    }
     this.gameId = options.gameId;
     this.players = options.players;
     this.difficulty = options.difficulty;
@@ -166,6 +160,7 @@ export class LocalMatch {
       } else {
         action = this.engine.botAction(seat, this.difficulty);
       }
+      action = action ?? view.legal[0] ?? null;
       if (action && !this.closed) {
         this.engine.apply(seat, action);
         this.publish();

@@ -423,7 +423,7 @@ class GameCoordinator(
                     if (fen.isNullOrBlank() || legal.isEmpty()) { done(null); return }
                     worker.execute {
                         val action = runCatching { stockfish().bestMove(fen, moveTimeFor(), skillFor(hostDifficulty))?.let { uciToAction(it, legal) } }.getOrNull()
-                        done(action)
+                        done(action ?: legal.firstOrNull())
                     }
                 }
                 "go" -> {
@@ -435,10 +435,10 @@ class GameCoordinator(
                     val legal = engine.snapshot(seat).legal
                     worker.execute {
                         val action = runCatching { katago().genMove(size, komi, moves, color)?.let { gtpToAction(it, size, legal) } }.getOrNull()
-                        done(action)
+                        done(action ?: legal.firstOrNull())
                     }
                 }
-                else -> done(engine.botAction(seat, hostDifficulty))
+                else -> done(engine.botAction(seat, hostDifficulty) ?: engine.snapshot(seat).legal.firstOrNull())
             }
         } catch (_: Exception) {
             done(null)

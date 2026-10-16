@@ -12,7 +12,7 @@ data class GameInfo(
     val minPlayers: Int = 2,
     val maxPlayers: Int = 3,
     val realtime: Boolean = false,
-    val bot: Boolean = false,
+    val bot: Boolean = true,
     val webBot: Boolean = bot
 )
 
